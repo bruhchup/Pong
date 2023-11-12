@@ -84,7 +84,7 @@ def trajectory(ball, player, y_vel):
     return y_vel
 
 def draw_menu(menu_select):
-    '''renders the main'''
+    '''renders the main menu'''
     SCREEN.fill(YELLOW)
 
     welcome_text = WELCOME_MENU_FONT.render('WELCOME TO PONG', 1, WHITE)
