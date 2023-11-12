@@ -19,11 +19,6 @@ MENU_FONT = pg.font.SysFont('CASCADIACODE', 135)
 WELCOME_MENU_FONT = pg.font.SysFont('CASCADIACODE', 110)
 AGAIN_MENU_FONT = pg.font.SysFont('CASCADIACODE', 80)
 
-print(POINT_FONT.size('0'))
-print(WELCOME_MENU_FONT.size('PLAYER 2 WINS!'))
-print(MENU_FONT.size('YES'))
-print(MENU_FONT.size('NO'))
-
 def draw_window(player1, player2, ball, score1, score2):
     '''renders the visuals of the game'''
 
