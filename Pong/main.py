@@ -6,6 +6,8 @@ import pygame as pg
 pg.font.init()
 
 WIDTH, HEIGHT = 950, 520
+PLAYER_WIDTH, PLAYER_HEIGHT = 25, 100
+BALL_CENTER = 412.5
 SCREEN = pg.display.set_mode((WIDTH, HEIGHT))
 pg.display.set_caption("pong")
 BLACK = (0, 0, 0)
@@ -39,6 +41,7 @@ def draw_window(player1, player2, ball, score1, score2):
     pg.display.update()
 
 def movement(keys_press, player1, player2):
+    # pylint: disable=no-member
     '''Defines what keys to press for which player movement'''
     if keys_press[pg.K_w] and player1.y - VEL >= 0:
         player1.y -= VEL
@@ -53,7 +56,7 @@ def movement(keys_press, player1, player2):
 
 def ball_start(ball):
     '''starts the ball off in the center at a random y coordinate'''
-    ball.x = 412.5
+    ball.x = BALL_CENTER
     ball.y = rand.randint(25,495)
 
 def ball_ball_direction(ball, ball_direction, y_vel):
@@ -93,15 +96,15 @@ def draw_menu(menu_select):
     play_text = MENU_FONT.render('PLAY', 1, WHITE)
     exit_text = MENU_FONT.render('QUIT', 1, WHITE)
 
-    menu_select_play = (350, 171, 250, 107)
-    menu_select_quit = (350, 315, 250, 107)
+    menu_play_blackbox = (350, 171, 250, 107)
+    menu_quit_blackbox = (350, 315, 250, 107)
 
     if menu_select == 0:
-        menu_select_play = (350, 171, 250, 107)
-        pg.draw.rect(SCREEN, BLACK, menu_select_play)
+        menu_play_blackbox = (350, 171, 250, 107)
+        pg.draw.rect(SCREEN, BLACK, menu_play_blackbox)
     if menu_select == 1:
-        menu_select_quit = (350, 315, 250, 107)
-        pg.draw.rect(SCREEN, BLACK, menu_select_quit)
+        menu_quit_blackbox = (350, 315, 250, 107)
+        pg.draw.rect(SCREEN, BLACK, menu_quit_blackbox)
 
     SCREEN.blit(welcome_text, (92.5, 60.5))
     SCREEN.blit(play_text, (357.5, 186))
@@ -124,11 +127,11 @@ def draw_again(score1, score2, menu_select):
     no_text = MENU_FONT.render('NO', 1, WHITE)
 
     if menu_select == 0:
-        menu_select_play = (376, 171, 198, 107)
-        pg.draw.rect(SCREEN, BLACK, menu_select_play)
+        menu_play_blackbox = (376, 171, 198, 107)
+        pg.draw.rect(SCREEN, BLACK, menu_play_blackbox)
     if menu_select == 1:
-        menu_select_quit = (376, 315, 198, 107)
-        pg.draw.rect(SCREEN, BLACK, menu_select_quit)
+        menu_quit_blackbox = (376, 315, 198, 107)
+        pg.draw.rect(SCREEN, BLACK, menu_quit_blackbox)
 
     SCREEN.blit(winner_text, (55.5, 60.5))
     SCREEN.blit(yes_text, (383.5, 186))
@@ -138,19 +141,20 @@ def draw_again(score1, score2, menu_select):
 
 
 def main():
+    # pylint: disable=no-member
     '''main method. initializes variables and handles in-game events'''
     while True:
 
         menu_select = 0
-        player1 = pg.Rect(50,0,25,100)
-        player2 = pg.Rect(875, 0, 25, 100)
+        player1 = pg.Rect(50, 210, PLAYER_WIDTH, PLAYER_HEIGHT)
+        player2 = pg.Rect(875, 210, PLAYER_WIDTH, PLAYER_HEIGHT)
         ball = pg.Rect(412.5, 247.5, 25, 25)
         score1 = 0
         score2 = 0
         goal_line_1 = 875
-        goal_line_2 = 73
-        out_of_bounds_2 = -500
-        out_of_bounds_1 = WIDTH + 500
+        goal_line_2 = 72
+        reset_point_2 = -500
+        reset_point_1 = WIDTH + 500
         ball_direction = rand.randint(1,2)
         clock = pg.time.Clock()
         running = True
@@ -195,22 +199,22 @@ def main():
             y_vel = hit_ceil_floor(ball, y_vel)
 
             if ball.x > goal_line_1:
-                if ball.x > out_of_bounds_1:
+                if ball.x > reset_point_1:
                     ball_direction = 2
                     score1 += 1
                     y_vel = rand.randint(-5,5)
                     ball_start(ball)
             if ball.x < goal_line_2:
-                if ball.x < out_of_bounds_2:
+                if ball.x < reset_point_2:
                     ball_direction = 1
                     score2 += 1
                     y_vel = rand.randint(-5,5)
                     ball_start(ball)
 
-            if pg.Rect.colliderect(player1, ball):
+            if pg.Rect.colliderect(player1, ball) and ball.x > goal_line_2:
                 ball_direction = 1
                 y_vel = trajectory(ball, player1, y_vel)
-            if pg.Rect.colliderect(player2, ball):
+            if pg.Rect.colliderect(player2, ball) and ball.x < goal_line_1:
                 ball_direction = 2
                 y_vel = trajectory(ball, player2, y_vel)
 
